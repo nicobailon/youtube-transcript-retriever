@@ -1,6 +1,7 @@
 import os
 from flask import Flask, request, jsonify
 from youtube_transcript_api import YouTubeTranscriptApi
+from youtube_transcript_api.formatters import JSONFormatter
 from functools import wraps
 
 app = Flask(__name__)
@@ -27,7 +28,9 @@ def get_transcript():
     
     try:
         transcript = YouTubeTranscriptApi.get_transcript(video_id)
-        return jsonify(transcript)
+        formatter = JSONFormatter()
+        json_formatted = formatter.format_transcript(transcript)
+        return json_formatted, 200, {'Content-Type': 'application/json'}
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
